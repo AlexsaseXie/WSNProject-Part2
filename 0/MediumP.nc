@@ -22,6 +22,7 @@ implementation
 {
 	bool sbusy;
 	bool busy;
+	bool sendResultSuccess = FALSE;
 	uint16_t count;
 	uint16_t low;
 	uint16_t high;
@@ -245,13 +246,22 @@ implementation
 	
 	event message_t* Receive.receive(message_t* msg, void* payload, uint8_t len) {
 		
-
 		int seq_number = 0;
 		uint32_t random_number = 0;
 		data_packge* rcvPayload;
+		result_ack* ackPayload;
 
 		if (len != sizeof(data_packge)) {
-			return msg;
+			if (len == sizeof(result_ack)) {
+
+				ackPayload = (result_ack*) payload;
+
+				if(ackPayload->group_id == 22) {
+					sendResultSuccess = TRUE;	
+				}
+
+				return msg;
+			}
 		}
 
 		call Leds.led2Toggle();
@@ -288,7 +298,19 @@ implementation
 
 	event message_t* ReceiveAck.receive(message_t* msg, void* payload, uint8_t len) {
 		//收到最终节点的ack
-		
+		result_ack* rcvPayload;
+
+		if (len != sizeof(result_ack)) {
+			return msg;
+		}
+
+		rcvPayload = (result_ack*) payload;
+
+		if(rcvPayload->group_id == 22) {
+			sendResultSuccess = TRUE;	
+		}
+
+		return msg;
 	}
 
 	
@@ -304,6 +326,8 @@ implementation
 	{
 		if (err == SUCCESS){
 			busy = FALSE;
+			if (sendResultSuccess == FALSE)
+				sendResult();
 		}
 	}
 

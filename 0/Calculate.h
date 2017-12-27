@@ -25,6 +25,11 @@ typedef nx_struct calculate_result
 	nx_uint32_t median;
 } calculate_result;
 
+typedef nx_struct result_ack
+{
+	nx_uint8_t group_id;
+} result_ack;
+
 //(groupid-1)*3+1/2/3
 //node id should be 28, 29, 30
 

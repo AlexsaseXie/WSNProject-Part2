@@ -21,7 +21,7 @@ implementation
 	MediumP.SAMSend1 -> SerialActiveMessageC1.AMSend[AM_CALCULATE_RESULT];
 	components new AMSenderC(AM_DATA_TRANSMIT);
 	MediumP.AMSend -> AMSenderC;
-	components new AMSenderC(AM_CALCULATE_RESULT) as AMSenderCResult;
+	components new AMSenderC(0) as AMSenderCResult;
 	MediumP.AMSendResult -> AMSenderCResult;
 	components new AMReceiverC(0) as DATA_AMReceive;
 	MediumP.Receive -> DATA_AMReceive;
