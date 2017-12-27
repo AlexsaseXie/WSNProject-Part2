@@ -14,7 +14,7 @@ implementation
 	CoReceiverP.Packet -> ActiveMessageC;
 	components new AMSenderC(AM_DATA_PACKGE) as DATA_PACKGE_AMResend;
 	CoReceiverP.AMSend -> DATA_PACKGE_AMResend;
-	components new AMReceiverC(AM_DATA_PACKGE) as DATA_AMReceive;
+	components new AMReceiverC(0) as DATA_AMReceive;
 	CoReceiverP.DataReceive -> DATA_AMReceive;
 	components new AMReceiverC(AM_DATA_TRANSMIT) as DATA_TRANSMIT_AMReceive;
 	CoReceiverP.AskReceive -> DATA_TRANSMIT_AMReceive;

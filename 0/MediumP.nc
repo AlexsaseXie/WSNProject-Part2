@@ -43,6 +43,7 @@ implementation
 		high = 0;
 		medium = min = max = sum = average = 0;
 		call RadioControl.start();
+		call SerialControl.start();
 	}
 	
 	event void RadioControl.startDone(error_t err) {

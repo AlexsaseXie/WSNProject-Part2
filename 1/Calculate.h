@@ -5,8 +5,8 @@
 enum
 {
 	AM_DATA_PACKGE = 10,
-	AM_CALCULATE_RESULT = 11,
-	AM_DATA_TRANSMIT = 12
+	AM_CALCULATE_RESULT = 10,
+	AM_DATA_TRANSMIT = 20
 };
 
 typedef nx_struct data_packge
