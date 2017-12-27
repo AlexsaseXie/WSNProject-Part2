@@ -1,2 +1,2 @@
-COMPONENT=RandomSenderC
+COMPONENT=MediumC
 include $(MAKERULES)
