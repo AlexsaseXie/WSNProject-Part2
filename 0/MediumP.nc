@@ -12,6 +12,7 @@ module MediumP
 	uses interface AMSend;
 	uses interface AMSend as AMSendResult;
 	uses interface AMSend as SAMSend;
+	uses interface AMSend as SAMSend1;
 	uses interface Receive;
 	uses interface Receive as ReceiveAck;
 	uses interface Queue<uint16_t>;
@@ -85,6 +86,47 @@ implementation
 
 	}
 
+	void sendMsg2(){
+		data_transmit* sndPayload;
+		uint16_t ask_num;
+
+		sndPayload = (data_transmit*) call Packet.getPayload(&pkt1, sizeof(data_transmit));
+
+			if (sndPayload == NULL) {
+				return;
+			}
+
+		sndPayload->data_type = 0;
+		sndPayload->data_num = count;
+			
+		if (call SAMSend.send(AM_BROADCAST_ADDR, &pkt1, sizeof(data_transmit)) == SUCCESS) {
+				busy = TRUE;
+			}
+		
+	}
+
+	void sendresult(){
+		calculate_result* sndPayload;
+		uint16_t ask_num;
+
+		sndPayload = (calculate_result*) call Packet.getPayload(&pkt1, sizeof(calculate_result));
+
+			if (sndPayload == NULL) {
+				return;
+			}
+		sndPayload->group_id = 22;
+		sndPayload->sum = sum;
+		sndPayload->average = average;
+		sndPayload->min = min;
+		sndPayload->max = max;
+		sndPayload->median = medium;
+			
+		if (call SAMSend1.send(AM_BROADCAST_ADDR, &pkt1, sizeof(calculate_result)) == SUCCESS) {
+				busy = TRUE;
+			}
+		
+	}
+
 	void insert(uint32_t number){
 		int left = low;
 		int right = high;
@@ -124,11 +166,17 @@ implementation
 			high++;
 
 		count++;
+		if(count % 100 == 0){
+			sendMsg2();
+			call Leds.led0Toggle();
+		}
+			
 
 		if(count == 2000){
 			medium = (nums[1000] + nums[999])/2;
 			average = sum/2000;
 			sendResult();
+			sendresult();
 		}
     }
 
@@ -155,11 +203,13 @@ implementation
 		}
 	}
 
+	
+
 	void sendMsgToComputer(){
 		data_transmit* sndPayload;
 		uint16_t ask_num;
 
-		if(!call Queue.empty() && sbusy == FALSE){
+		if(!call Queue2.empty() && sbusy == FALSE){
 			//resend
 			ask_num = call Queue2.dequeue();
 
@@ -259,6 +309,13 @@ implementation
 		if (err == SUCCESS){
 			sbusy = FALSE;
 			sendMsgToComputer();
+		}
+	}
+
+	event void SAMSend1.sendDone(message_t* msg, error_t err)
+	{
+		if (err == SUCCESS){
+			sbusy = FALSE;
 		}
 	}
 
