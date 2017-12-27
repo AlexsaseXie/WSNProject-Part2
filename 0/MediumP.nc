@@ -1,21 +1,26 @@
 
 #include "Calculate.h"
 
-module RandomSenderP
+module MediumP
 {
 	uses interface Boot;
 	uses interface Leds;
 	uses interface Packet;
 	uses interface SplitControl as RadioControl;
+	uses interface SplitControl as SerialControl;
 
 	uses interface AMSend;
-	uses interface AMSend as AmSendResult;
+	uses interface AMSend as AMSendResult;
+	uses interface AMSend as SAMSend;
 	uses interface Receive;
 	uses interface Receive as ReceiveAck;
 	uses interface Queue<uint16_t>;
+	uses interface Queue<uint16_t> as Queue2;
 }
 implementation
 {
+	bool sbusy;
+	bool busy;
 	uint16_t count;
 	uint16_t low;
 	uint16_t high;
@@ -27,6 +32,9 @@ implementation
 	uint32_t max;
 	uint32_t sum;
 	uint32_t average;
+
+	message_t pkt1;
+	message_t pkt;
 
 	event void Boot.booted()
 	{
@@ -146,18 +154,44 @@ implementation
 		}
 	}
 
+	void sendMsgToComputer(){
+		data_transmit* sndPayload;
+		uint16_t ask_num;
+
+		if(!call Queue.empty() && sbusy == FALSE){
+			//resend
+			ask_num = call Queue2.dequeue();
+
+			sndPayload = (data_transmit*) call Packet.getPayload(&pkt1, sizeof(data_transmit));
+
+			if (sndPayload == NULL) {
+				return;
+			}
+
+			sndPayload->data_type = 0;
+			sndPayload->data_num = ask_num;
+			
+			if (call SAMSend.send(AM_BROADCAST_ADDR, &pkt1, sizeof(data_transmit)) == SUCCESS) {
+				busy = TRUE;
+			}
+		}
+	}
+
 	void findLostNums(){
 		int i;
 		for(i = 1;i < 2001;i++){
 			if(flag[i] == 0){
-				call Queue.enQueue(i);
+				call Queue.enqueue(i);
+				call Queue2.enqueue(i);
 			}
 		}
 		askNums();
+		sendMsgToComputer();
 	}
 	
 	event message_t* Receive.receive(message_t* msg, void* payload, uint8_t len) {
 		
+
 		int seq_number = 0;
 		uint32_t random_number = 0;
 		data_packge* rcvPayload;
@@ -166,6 +200,8 @@ implementation
 			return msg;
 		}
 
+		call Leds.led2Toggle();
+		
 		rcvPayload = (data_packge*) payload;
 		
 		seq_number = rcvPayload->sequence_number;
@@ -191,7 +227,7 @@ implementation
 
 		insert(random_number);
 		
-		if(sequence_number == 2000)
+		if(seq_number == 2000)
 			findLostNums();
 		return msg;
 	}
@@ -216,4 +252,24 @@ implementation
 			busy = FALSE;
 		}
 	}
+
+	event void SAMSend.sendDone(message_t* msg, error_t err)
+	{
+		if (err == SUCCESS){
+			sbusy = FALSE;
+			sendMsgToComputer();
+		}
+	}
+
+	event void SerialControl.startDone(error_t err) {
+		if (err != SUCCESS) {
+			call SerialControl.start();
+		}
+		//call Leds.led2Toggle();
+	}
+
+	event void SerialControl.stopDone(error_t err) {
+		// todo
+	}
+
 }

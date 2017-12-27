@@ -1,2 +1,2 @@
-COMPONENT=MediumC
+COMPONENT=Medium
 include $(MAKERULES)
