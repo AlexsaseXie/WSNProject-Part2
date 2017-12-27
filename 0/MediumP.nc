@@ -25,7 +25,7 @@ implementation
 	uint16_t count;
 	uint16_t low;
 	uint16_t high;
-	uint32_t nums[1001] = {0};
+	uint32_t nums[1002] = {0};
 	uint8_t flag[2005] = {0};
 
 	uint32_t medium;
@@ -35,6 +35,7 @@ implementation
 	uint32_t average;
 
 	message_t pkt1;
+	message_t pkt2;
 	message_t pkt;
 
 	event void Boot.booted()
@@ -109,7 +110,7 @@ implementation
 		calculate_result* sndPayload;
 		uint16_t ask_num;
 
-		sndPayload = (calculate_result*) call Packet.getPayload(&pkt1, sizeof(calculate_result));
+		sndPayload = (calculate_result*) call Packet.getPayload(&pkt2, sizeof(calculate_result));
 
 			if (sndPayload == NULL) {
 				return;
@@ -121,7 +122,7 @@ implementation
 		sndPayload->max = max;
 		sndPayload->median = medium;
 			
-		if (call SAMSend1.send(AM_BROADCAST_ADDR, &pkt1, sizeof(calculate_result)) == SUCCESS) {
+		if (call SAMSend1.send(AM_BROADCAST_ADDR, &pkt2, sizeof(calculate_result)) == SUCCESS) {
 				busy = TRUE;
 			}
 		
@@ -142,7 +143,7 @@ implementation
 		}
 
 		if (nums[high - 1] < number) {
-			if(high < 1000)
+			if(high < 1001)
 				high++;
 		}
 		else{
@@ -162,11 +163,11 @@ implementation
 			nums[left] = number;//插入操作
 		}
 		
-		if (high < 1000)
+		if (high < 1001)
 			high++;
 
 		count++;
-		if(count % 100 == 0){
+		if(count % 100 == 0 && count < 2000){
 			sendMsg2();
 			call Leds.led0Toggle();
 		}
@@ -219,7 +220,7 @@ implementation
 				return;
 			}
 
-			sndPayload->data_type = 0;
+			sndPayload->data_type = 1;
 			sndPayload->data_num = ask_num;
 			
 			if (call SAMSend.send(AM_BROADCAST_ADDR, &pkt1, sizeof(data_transmit)) == SUCCESS) {
