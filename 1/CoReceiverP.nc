@@ -1,7 +1,7 @@
 
 #include "Calculate.h"
 
-#define MAX_NUM 1000000
+#define MAX_NUM 0xFFFFFFFF
 
 module CoReceiverP
 {
@@ -16,6 +16,10 @@ module CoReceiverP
 	uses interface SplitControl as RadioControl;
 
 	uses interface Queue<uint16_t>;
+
+	// uses interface AMSend as SerialAMSend;
+	// uses interface SplitControl as SerialControl;
+	// uses interface Packet as SerialPacket;
 }
 implementation
 {
@@ -55,6 +59,7 @@ implementation
 	
 	event void Boot.booted(){
 		call RadioControl.start();
+		// call SerialControl.start();
 		initNums();
 	}
 	
@@ -66,6 +71,15 @@ implementation
 	event void RadioControl.stopDone(error_t err) { 
 		//todo
 	}
+
+	// event void SerialControl.startDone(error_t err){
+	// 	if(err != SUCCESS)
+	// 		call SerialControl.start();
+	// }
+	
+	// event void SerialControl.stopDone(error_t err) { 
+	// 	//todo
+	// }
 
 	event message_t* AskReceive.receive(message_t* msg, void* payload, uint8_t len) {
 		data_transmit* rcvPayload;
@@ -81,11 +95,11 @@ implementation
 		ask_num = rcvPayload->data_num;
 		
 
-		//if ( nums[ask_num] != MAX_NUM ){
-		call Queue.enqueue(ask_num);
-		if (busy == FALSE)
-			resendNums();
-		//}
+		if ( nums[ask_num] != MAX_NUM ){
+			call Queue.enqueue(ask_num);
+			if (busy == FALSE)
+				resendNums();
+		}
 
 	    return msg;
 	}

@@ -21,4 +21,9 @@ implementation
 	components new QueueC(uint16_t,50);
 	CoReceiverP.Queue -> QueueC.Queue;
 	CoReceiverP.Boot -> MainC;
+
+	// components SerialActiveMessageC;
+	// CoReceiverP.SerialControl -> SerialActiveMessageC;
+	// CoReceiverP.SerialPacket -> SerialActiveMessageC;
+	// CoReceiverC.SerialAMSend -> SerialActiveMessageC.AMSend[AM_DATA_PACKGE];
 }
