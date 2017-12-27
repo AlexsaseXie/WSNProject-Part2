@@ -1,2 +1,0 @@
-COMPONENT=CoReceiverC
-include $(MAKERULES)

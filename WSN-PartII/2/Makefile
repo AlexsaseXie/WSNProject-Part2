@@ -1,2 +1,0 @@
-COMPONENT=RandomSenderC
-include $(MAKERULES)
