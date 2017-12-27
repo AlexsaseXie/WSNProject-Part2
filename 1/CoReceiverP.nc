@@ -51,7 +51,7 @@ implementation
 			sndPayload->sequence_number = ask_num;
 			sndPayload->random_integer = nums[ask_num];
 			
-			if (call AMSend.send(1, &pkt, sizeof(data_packge)) == SUCCESS) {
+			if (call AMSend.send(64, &pkt, sizeof(data_packge)) == SUCCESS) {
 				busy = TRUE;
 			}
 		}
