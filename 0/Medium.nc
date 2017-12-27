@@ -15,12 +15,13 @@ implementation
 	MediumP.RadioControl -> ActiveMessageC;
 	MediumP.Packet -> ActiveMessageC;
 	components SerialActiveMessageC;
+	MediumP.SerialControl -> SerialActiveMessageC;
 	MediumP.SAMSend -> SerialActiveMessageC.AMSend[AM_DATA_TRANSMIT];
 	components new AMSenderC(AM_DATA_TRANSMIT);
 	MediumP.AMSend -> AMSenderC;
 	components new AMSenderC(AM_CALCULATE_RESULT) as AMSenderCResult;
 	MediumP.AMSendResult -> AMSenderCResult;
-	components new AMReceiverC(AM_DATA_PACKGE) as DATA_AMReceive;
+	components new AMReceiverC(0) as DATA_AMReceive;
 	MediumP.Receive -> DATA_AMReceive;
 	components new AMReceiverC(AM_DATA_PACKGE) as ACK_AMReceive;
 	MediumP.ReceiveAck -> ACK_AMReceive;
