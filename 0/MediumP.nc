@@ -123,7 +123,7 @@ implementation
 		sndPayload->median = medium;
 			
 		if (call SAMSend1.send(AM_BROADCAST_ADDR, &pkt2, sizeof(calculate_result)) == SUCCESS) {
-				busy = TRUE;
+				sbusy = TRUE;
 			}
 		
 	}
@@ -161,12 +161,13 @@ implementation
 				nums[j + 1] = nums[j];//统一向后移动元素，空出插入位置
 
 			nums[left] = number;//插入操作
-		}
-		
-		if (high < 1001)
+
+			if (high < 1001)
 			high++;
+		}
 
 		count++;
+
 		if(count % 100 == 0 && count < 2000){
 			sendMsg2();
 			call Leds.led0Toggle();
@@ -174,6 +175,7 @@ implementation
 			
 
 		if(count == 2000){
+			call Leds.led1Toggle();
 			medium = (nums[1000] + nums[999])/2;
 			average = sum/2000;
 			sendResult();
@@ -181,14 +183,14 @@ implementation
 		}
     }
 
-	void askNums(){
+	task void askNums(){
 		data_transmit* sndPayload;
 		uint16_t ask_num;
 
-		if(!call Queue.empty() && busy == FALSE){
+		if(!call Queue.empty()){
 			//resend
 			ask_num = call Queue.dequeue();
-
+			call Leds.led2Toggle();
 			sndPayload = (data_transmit*) call Packet.getPayload(&pkt, sizeof(data_transmit));
 
 			if (sndPayload == NULL) {
@@ -224,7 +226,7 @@ implementation
 			sndPayload->data_num = ask_num;
 			
 			if (call SAMSend.send(AM_BROADCAST_ADDR, &pkt1, sizeof(data_transmit)) == SUCCESS) {
-				busy = TRUE;
+				sbusy = TRUE;
 			}
 		}
 	}
@@ -237,7 +239,7 @@ implementation
 				call Queue2.enqueue(i);
 			}
 		}
-		askNums();
+		post askNums();
 		sendMsgToComputer();
 	}
 	
@@ -294,7 +296,7 @@ implementation
 	{
 		if (err == SUCCESS){
 			busy = FALSE;
-			askNums();
+			post askNums();
 		}
 	}
 
