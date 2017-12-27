@@ -51,7 +51,7 @@ implementation
 			sndPayload->sequence_number = ask_num;
 			sndPayload->random_integer = nums[ask_num];
 			
-			if (call AMSend.send(64, &pkt, sizeof(data_packge)) == SUCCESS) {
+			if (call AMSend.send(AM_BROADCAST_ADDR, &pkt, sizeof(data_packge)) == SUCCESS) {
 				busy = TRUE;
 			}
 		}
@@ -83,22 +83,24 @@ implementation
 
 	event message_t* AskReceive.receive(message_t* msg, void* payload, uint8_t len) {
 		data_transmit* rcvPayload;
-		int ask_num;
+		uint16_t ask_num;
+		//return msg;
 
-		call Leds.led1Toggle();
+		call Leds.led2Toggle();
 		if (len != sizeof(data_transmit)) {
 			return msg;
 		}
-
+		//call Leds.led2Toggle();
 		rcvPayload = (data_transmit*) payload;
 
 		ask_num = rcvPayload->data_num;
 		
-
+		
 		if ( nums[ask_num] != MAX_NUM ){
 			call Queue.enqueue(ask_num);
 			if (busy == FALSE)
 				resendNums();
+				call Leds.led1Toggle();
 		}
 
 	    return msg;
