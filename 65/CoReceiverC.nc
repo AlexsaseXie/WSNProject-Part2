@@ -25,5 +25,5 @@ implementation
 	// components SerialActiveMessageC;
 	// CoReceiverP.SerialControl -> SerialActiveMessageC;
 	// CoReceiverP.SerialPacket -> SerialActiveMessageC;
-	// CoReceiverC.SerialAMSend -> SerialActiveMessageC.AMSend[AM_DATA_PACKGE];
+	// CoReceiverP.SerialAMSend -> SerialActiveMessageC.AMSend[AM_DATA_PACKGE];
 }

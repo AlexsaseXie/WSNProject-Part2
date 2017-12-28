@@ -69,6 +69,7 @@ implementation
 
 		if(busy == FALSE){
 			//sendresult
+			call Leds.led0Toggle();
 			sndPayload = (calculate_result*) call Packet.getPayload(&pkt, sizeof(calculate_result));
 
 			if (sndPayload == NULL) {
@@ -82,7 +83,7 @@ implementation
 			sndPayload->average = average;
 			sndPayload->median = medium;
 
-			if (call AMSendResult.send(0, &pkt, sizeof(data_transmit)) == SUCCESS) {
+			if (call AMSendResult.send(0, &pkt, sizeof(calculate_result)) == SUCCESS) {
 				busy = TRUE;
 			}
 		}
@@ -172,7 +173,7 @@ implementation
 
 		if(count % 100 == 0 && count < 2000){
 			sendMsg2();
-			call Leds.led0Toggle();
+			//  call Leds.led0Toggle();
 		}
 			
 
@@ -260,9 +261,8 @@ implementation
 				if(ackPayload->group_id == 22) {
 					sendResultSuccess = TRUE;	
 				}
-
-				return msg;
 			}
+			return msg;
 		}
 
 		call Leds.led2Toggle();
