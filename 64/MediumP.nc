@@ -11,10 +11,11 @@ module MediumP
 
 	uses interface AMSend;
 	uses interface AMSend as AMSendResult;
+
 	uses interface AMSend as SAMSend;
 	uses interface AMSend as SAMSend1;
 	uses interface Receive;
-	uses interface Receive as ReceiveAck;
+	//uses interface Receive as ReceiveAck;
 	uses interface Queue<uint16_t>;
 	uses interface Queue<uint16_t> as Queue2;
 }
@@ -207,8 +208,6 @@ implementation
 		}
 	}
 
-	
-
 	void sendMsgToComputer(){
 		data_transmit* sndPayload;
 		uint16_t ask_num;
@@ -254,6 +253,8 @@ implementation
 		if (len != sizeof(data_packge)) {
 			if (len == sizeof(result_ack)) {
 
+				call Leds.led0On();
+
 				ackPayload = (result_ack*) payload;
 
 				if(ackPayload->group_id == 22) {
@@ -296,22 +297,22 @@ implementation
 		return msg;
 	}
 
-	event message_t* ReceiveAck.receive(message_t* msg, void* payload, uint8_t len) {
-		//收到最终节点的ack
-		result_ack* rcvPayload;
+	// event message_t* ReceiveAck.receive(message_t* msg, void* payload, uint8_t len) {
+	// 	//收到最终节点的ack
+	// 	result_ack* rcvPayload;
 
-		if (len != sizeof(result_ack)) {
-			return msg;
-		}
+	// 	if (len != sizeof(result_ack)) {
+	// 		return msg;
+	// 	}
 
-		rcvPayload = (result_ack*) payload;
+	// 	rcvPayload = (result_ack*) payload;
 
-		if(rcvPayload->group_id == 22) {
-			sendResultSuccess = TRUE;	
-		}
+	// 	if(rcvPayload->group_id == 22) {
+	// 		sendResultSuccess = TRUE;	
+	// 	}
 
-		return msg;
-	}
+	// 	return msg;
+	// }
 
 	
 	event void AMSend.sendDone(message_t* msg, error_t err)
@@ -350,7 +351,6 @@ implementation
 		if (err != SUCCESS) {
 			call SerialControl.start();
 		}
-		//call Leds.led2Toggle();
 	}
 
 	event void SerialControl.stopDone(error_t err) {

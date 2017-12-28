@@ -25,8 +25,8 @@ implementation
 	MediumP.AMSendResult -> AMSenderCResult;
 	components new AMReceiverC(0) as DATA_AMReceive;
 	MediumP.Receive -> DATA_AMReceive;
-	components new AMReceiverC(AM_DATA_PACKGE) as ACK_AMReceive;
-	MediumP.ReceiveAck -> ACK_AMReceive;
+	//components new AMReceiverC(AM_DATA_PACKGE) as ACK_AMReceive;
+	//MediumP.ReceiveAck -> ACK_AMReceive;
 	components new QueueC(uint16_t,50);
 	MediumP.Queue -> QueueC.Queue;
 	components new QueueC(uint16_t,50) as Queue2;

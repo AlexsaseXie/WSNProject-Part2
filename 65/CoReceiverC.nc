@@ -12,7 +12,7 @@ implementation
 	components ActiveMessageC;
 	CoReceiverP.RadioControl -> ActiveMessageC;
 	CoReceiverP.Packet -> ActiveMessageC;
-	components new AMSenderC(AM_DATA_PACKGE) as DATA_PACKGE_AMResend;
+	components new AMSenderC(0) as DATA_PACKGE_AMResend;
 	CoReceiverP.AMSend -> DATA_PACKGE_AMResend;
 	components new AMReceiverC(0) as DATA_AMReceive;
 	CoReceiverP.DataReceive -> DATA_AMReceive;
