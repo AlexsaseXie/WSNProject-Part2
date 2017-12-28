@@ -83,7 +83,7 @@ implementation
 			sndPayload->average = average;
 			sndPayload->median = medium;
 
-			if (call AMSendResult.send(0, &pkt, sizeof(calculate_result)) == SUCCESS) {
+			if (call AMSendResult.send(AM_BROADCAST_ADDR, &pkt, sizeof(calculate_result)) == SUCCESS) {
 				busy = TRUE;
 			}
 		}
@@ -104,7 +104,7 @@ implementation
 		sndPayload->data_num = count;
 			
 		if (call SAMSend.send(AM_BROADCAST_ADDR, &pkt1, sizeof(data_transmit)) == SUCCESS) {
-				busy = TRUE;
+				sbusy = TRUE;
 			}
 		
 	}
