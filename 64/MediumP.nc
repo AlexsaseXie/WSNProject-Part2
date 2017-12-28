@@ -241,7 +241,7 @@ implementation
 			}
 		}
 		post askNums();
-		sendMsgToComputer();
+		//sendMsgToComputer();
 	}
 	
 	event message_t* Receive.receive(message_t* msg, void* payload, uint8_t len) {
@@ -272,25 +272,27 @@ implementation
 		seq_number = rcvPayload->sequence_number;
 		random_number = rcvPayload->random_integer;
 
-		if(flag[seq_number] == 1)
+		if(flag[seq_number] == 1){
 			return msg;
-
-		flag[seq_number] = 1;
-
-		sum += random_number;
-
-		if(count == 0){
-			max = random_number;
-			min = random_number;
 		}
-		else{
-			if(min > random_number)
-				min = random_number;
-			if(max < random_number)
+		else{	
+			flag[seq_number] = 1;
+
+			sum += random_number;
+
+			if(count == 0){
 				max = random_number;
-		}
+				min = random_number;
+			}
+			else{
+				if(min > random_number)
+					min = random_number;
+				if(max < random_number)
+					max = random_number;
+			}
 
-		insert(random_number);
+			insert(random_number);
+		}
 		
 		if(seq_number == 2000)
 			findLostNums();

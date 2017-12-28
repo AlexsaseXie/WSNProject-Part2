@@ -18,7 +18,7 @@ implementation
 	CoReceiverP.DataReceive -> DATA_AMReceive;
 	components new AMReceiverC(AM_DATA_TRANSMIT) as DATA_TRANSMIT_AMReceive;
 	CoReceiverP.AskReceive -> DATA_TRANSMIT_AMReceive;
-	components new QueueC(uint16_t,50);
+	components new QueueC(uint16_t,150);
 	CoReceiverP.Queue -> QueueC.Queue;
 	CoReceiverP.Boot -> MainC;
 
